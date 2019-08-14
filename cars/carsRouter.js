@@ -38,11 +38,35 @@ router.post('/', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
+    const body = req.body;
+    console.log('Body', body)
+    console.log('ID', req.params.id)
+
+    db('cars')
+        .where({ id: req.params.id })
+        .update(body)
+            
+            .then((car) => {
+                if (!car > 0) {
+                    res.status(404).json({ message: "You did not update the record." });
+                } else {
+                    res.status(200).json(body);
+                }
+            }).catch(err => {
+                res.status(500).json({ message: "There was an error with the server." });
+            })
     
 });
 
 router.delete('/:id', (req, res) => {
-    
+    db('cars')
+        .where({ id: req.params.id })
+        .del()
+            .then((record) => {
+                res.status(200).json({ message: "The record deleted successfully" });
+            }).catch(err => {
+                res.status(500).json({message: "There was an error with the server" });
+            })
 });
 
 module.exports = router;
